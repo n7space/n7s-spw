@@ -1,3 +1,7 @@
+// N7 Space Sp. z o.o.
+// https://n7space.com
+// COPYRIGHT (C) 2022-2025
+
 #include "tch.h"
 
 void Spw_Tch_init(){}

@@ -1,3 +1,7 @@
+// N7 Space Sp. z o.o.
+// https://n7space.com
+// COPYRIGHT (C) 2022-2025
+
 #include "rx.h"
 
 void Spw_Rx_init(){}
