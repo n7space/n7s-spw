@@ -44,7 +44,7 @@ static inline uint32_t readDistIrq(SPW_LINK id)
 	}
 }
 
-static inline uint32_t link_readDistIrqMasked(SPW_LINK id)
+static inline uint32_t readDistIrqMasked(SPW_LINK id)
 {
 	if (id == SPW_LINK_1) {
 		return SPW_REGS->SPW_LINK1_DISTINTPI_RM;
@@ -317,7 +317,7 @@ Spw_Link_getDistributedInterruptIrq(const Spw_Link_t *link)
 SPW_LINK_DIST_INT_MASK
 Spw_Link_getDistributedInterruptIrqMasked(const Spw_Link_t *link)
 {
-	return (SPW_LINK_DIST_INT_MASK)link_readDistIrqMasked(link->id);
+	return (SPW_LINK_DIST_INT_MASK)readDistIrqMasked(link->id);
 }
 
 SPW_LINK_DIST_INT_MASK
