@@ -194,10 +194,12 @@ void Spw_Link_reset(const Spw_Link_t *link)
 {
 	if (link->id == SPW_LINK_1) {
 		SPW_REGS->SPW_LINK1_SWRESET = SWRESET_ARM_PATTERN;
+        // Generate read from SWRESET register (without it resets are unreliable)
 		(void)SPW_REGS->SPW_LINK1_SWRESET;
 		SPW_REGS->SPW_LINK1_SWRESET = SWRESET_TRIGGER_PATTERN;
 	} else if (link->id == SPW_LINK_2) {
 		SPW_REGS->SPW_LINK2_SWRESET = SWRESET_ARM_PATTERN;
+        // Generate read from SWRESET register (without it resets are unreliable)
 		(void)SPW_REGS->SPW_LINK2_SWRESET;
 		SPW_REGS->SPW_LINK2_SWRESET = SWRESET_TRIGGER_PATTERN;
 	}
