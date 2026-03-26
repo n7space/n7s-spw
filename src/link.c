@@ -89,15 +89,11 @@ static inline void writeDistAckIrqClear(SPW_LINK id, uint32_t mask)
 	}
 }
 
-void Spw_Link_init(Spw_Link *const link, SPW_LINK id,
-		   const Spw_Link_Config *const config)
+void Spw_Link_init(Spw_Link *const link, const SPW_LINK id)
 {
-	Spw_Link_setIrqMask(link, 0, 0xFFFFFFFF);
+	SPW_LINK_Initialize();
 
 	link->id = id;
-	if (config != NULL) {
-		Spw_Link_setConfig(link, config);
-	}
 }
 
 void Spw_Link_setConfig(const Spw_Link *const link,

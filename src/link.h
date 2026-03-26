@@ -140,10 +140,8 @@ typedef struct {
 /// \brief Initializes a Spacewire Link descriptor and configures the hardware.
 /// \param[out] link   Descriptor to initialize.
 /// \param[in]  id     Link to use (SPW_LINK_1 or SPW_LINK_2).
-/// \param[in]  config Initial link configuration (may be NULL to skip hardware
 /// setup).
-void Spw_Link_init(Spw_Link *const link, SPW_LINK id,
-		   const Spw_Link_Config *const config);
+void Spw_Link_init(Spw_Link *const link, const SPW_LINK id);
 
 /// \brief Applies a new configuration to the Spacewire Link hardware.
 /// \param[in] link   Link descriptor.
