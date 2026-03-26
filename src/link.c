@@ -175,13 +175,13 @@ void Spw_Link_getConfig(const Spw_Link *const link, Spw_Link_Config *const confi
 				    SPW_LINK1_TRANSESC_CHAR_Pos);
 
 	config->distributedIrqToEnable =
-		0; // No way to read currently enabled interrupts
+		0; // Set to 0, used only in setter
 	config->distributedIrqToDisable =
-		0; // No way to read currently enabled interrupts
+		0; // Set to 0, used only in setter
 	config->distributedAckIrqToEnable =
-		0; // No way to read currently enabled interrupts
+		0; // Set to 0, used only in setter
 	config->distributedAckIrqToDisable =
-		0; // No way to read currently enabled interrupts
+		0; // Set to 0, used only in setter
 }
 
 void Spw_Link_reset(Spw_Link *const link)
