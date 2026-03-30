@@ -8,8 +8,8 @@
 #ifndef N7S_SPW_H
 #define N7S_SPW_H
 
-#include "link.h"
 #include "microchip_spw/plib_spw.h"
+#include "link.h"
 #include "rx.h"
 #include "tx.h"
 

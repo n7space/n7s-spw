@@ -17,8 +17,6 @@ extern "C" {
 
 #include "microchip_spw/plib_spw_pktrx.h"
 
-#define SPW_PKTRX1_IRQREGS_ALLIRQ_MASK 0x0000001Fu
-
 /// @brief Structure representing a Spacewire rx instance.
 typedef struct {
 	uint32_t dummy; // Placeholder member, currently unused

@@ -7,6 +7,8 @@
 #define SWRESET_ARM_PATTERN 0x4D616A6Fu
 #define SWRESET_TRIGGER_PATTERN 0x72546F6Du
 
+#define SPW_PKTRX1_IRQREGS_ALLIRQ_MASK 0x0000001FU
+
 void Spw_Rx_init(Spw_Rx *const rx) { (void)rx; }
 
 void Spw_Rx_setConfig(Spw_Rx *const rx, const Spw_Rx_Config *const config)
