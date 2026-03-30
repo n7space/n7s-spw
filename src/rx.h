@@ -40,15 +40,15 @@ typedef enum {
 
 /// @brief Structure listing triggered interrupts.
 typedef struct {
-	/// @brief Receive buffer activated, interrupt occurred.
+	/// @brief Whether a receive buffer activated interrupt is pending.
 	bool receivedBufferActivatedIrqOccurred;
-	/// @brief Incoming packet discarded, interrupt occurred.
+	/// @brief Whether an incoming packet discarded interrupt is pending.
 	bool incomingPackedDiscardedIrqOccurred;
-	/// @brief Incoming Eep was detected, interrupt occurred.
+	/// @brief Whether an incoming Eep detected interrupt is pending.
 	bool incomingEepDetectedIrqOccurred;
-	/// @brief Incoming Eop was detected, interrupt occurred.
+	/// @brief Whether an incoming Eop detected interrupt is pending.
 	bool incomingEopDetectedIrqOccurred;
-	/// @brief Receive buffer deactivated, interrupt occurred.
+	/// @brief Whether a receive buffer deactivated interrupt is pending.
 	bool receivedBufferDeactivatedIrqOccurred;
 } Spw_Rx_IrqStatus;
 
@@ -160,51 +160,74 @@ typedef struct {
 } Spw_Rx_RxBufferConfig;
 
 /// @brief Initializes a device descriptor for Spacewire rx.
+/// @param[in] rx   Rx descriptor.
 void Spw_Rx_init(Spw_Rx *const rx);
 
 /// @brief Sets Spacewire PktRx config.
+/// @param[in] rx     Rx descriptor.
+/// @param[in] config Rx configuration.
 void Spw_Rx_setConfig(Spw_Rx *const rx, const Spw_Rx_Config *const config);
 
 /// @brief Resets Spacewire PktRx to default state.
+/// @param[out] rx     Rx descriptor.
 void Spw_Rx_reset(Spw_Rx *const rx);
 
 /// @brief Gets PktRx interrupts.
+/// @param[in] rx     Rx descriptor.
 uint32_t Spw_Rx_getIrq(const Spw_Rx *const rx);
 
 /// @brief Gets masked PktRx interrupts.
+/// @param[in] rx     Rx descriptor.
 uint32_t Spw_Rx_getIrqMasked(const Spw_Rx *const rx);
 
 /// @brief Gets and clears PktRx interrupts.
+/// @param[out] rx     Rx descriptor.
 uint32_t Spw_Rx_getAndClearIrq(Spw_Rx *const rx);
 
 /// @brief Gets and clears masked PktRx interrupts.
+/// @param[out] rx     Rx descriptor.
 uint32_t Spw_Rx_getAndClearIrqMasked(Spw_Rx *const rx);
 
+/// @brief Clears PktRx interrupts.
+/// @param[out] rx     Rx descriptor.
 void Spw_Rx_clearIrq(Spw_Rx *const rx);
 
 /// @brief Sets next Receive Buffer.
+/// @param[out] rx     Rx descriptor.
+/// @param[in] config  Receive Buffer configuration.
 void Spw_Rx_setNextRxBuffer(Spw_Rx *const rx,
 			    const Spw_Rx_RxBufferConfig *const config);
 
 /// @brief Aborts current Receive Buffer.
+/// @param[out] rx     Rx descriptor.
 void Spw_Rx_abortOngoingPacketRx(Spw_Rx *const rx);
 
 /// @brief Gets next Receive Buffer config.
+/// @param[in] rx     Rx descriptor.
+/// @param[out] config  Receive Buffer configuration.
 void Spw_Rx_getNextRxBufferConfig(const Spw_Rx *const rx,
 				  Spw_Rx_RxBufferConfig *const config);
 
 /// @brief Gets PktRx status.
+/// @param[in] rx     Rx descriptor.
+/// @param[out] status PktRx status.
 void Spw_Rx_getStatus(const Spw_Rx *const rx, Spw_Rx_Status *const status);
 
 /// @brief Gets previous Receive Buffer status.
+/// @param[in] rx     Rx descriptor.
+/// @param[out] status Previous Receive Buffer status.
 void Spw_Rx_getPreviousRxBufferStatus(const Spw_Rx *const rx,
 				      Spw_Rx_PreviousRxBufferStatus *const status);
 
 /// @brief Decodes Receive Buffer entry.
+/// @param[in] entry  Receive Buffer entry.
+/// @param[out] entryStruct Decoded Receive Buffer entry structure.
 void Spw_Rx_getRxBufferEntry(const Spw_Rx_RxBufferEntry *const entry,
 			     Spw_Rx_RxBufferEntryStruct *const entryStruct);
 
 /// @brief Decodes PktRx interrupt register.
+/// @param[in] rxIrqStatusValue PktRx interrupt status value.
+/// @param[out] status Decoded PktRx interrupt status.
 void Spw_Rx_getStructuredIrq(const uint32_t rxIrqStatusValue,
 			     Spw_Rx_IrqStatus *const status);
 
