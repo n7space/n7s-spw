@@ -12,8 +12,8 @@
 extern "C" {
 #endif
 
-#include "stdbool.h"
-#include "stdint.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 #include "microchip_spw/plib_spw_pktrx.h"
 
@@ -41,7 +41,7 @@ typedef struct {
 	/// @brief Whether a receive buffer activated interrupt is pending.
 	bool receivedBufferActivatedIrqOccurred;
 	/// @brief Whether an incoming packet discarded interrupt is pending.
-	bool incomingPackedDiscardedIrqOccurred;
+	bool incomingPacketDiscardedIrqOccurred;
 	/// @brief Whether an incoming Eep detected interrupt is pending.
 	bool incomingEepDetectedIrqOccurred;
 	/// @brief Whether an incoming Eop detected interrupt is pending.
@@ -61,7 +61,7 @@ typedef struct {
 	/// @brief Is next Receive Buffer armed.
 	bool isNextReceiveBufferArmed;
 	/// @brief Is previous receive buffer locked.
-	bool isPrevoiusReceiveBufferLocked;
+	bool isPreviousReceiveBufferLocked;
 	/// @brief Is incoming Packet ongoing.
 	bool isIncomingPacketOngoing;
 	/// @brief Number of packets in current Receive Buffer.

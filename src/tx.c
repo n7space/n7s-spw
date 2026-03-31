@@ -60,10 +60,10 @@ void Spw_Tx_setNextSendListEntry(Spw_Tx_SendListEntry *const entry,
 	entry->EscChar = (uint32_t)entryStruct->escapeChar;
 	entry->HCrc    = entryStruct->calculateHeaderCrc ? 1U : 0U;
 	entry->HSize   = (uint32_t)entryStruct->headerSize;
-	entry->HAddr   = (uint32_t)entryStruct->headerAddress;
+	entry->HAddr   = (uint32_t)(uintptr_t)entryStruct->headerAddress;
 	entry->DCrc    = entryStruct->calculateDataCrc ? 1U : 0U;
 	entry->DSize   = (uint32_t)entryStruct->dataSize;
-	entry->DAddr   = (uint32_t)entryStruct->dataAddress;
+	entry->DAddr   = (uint32_t)(uintptr_t)entryStruct->dataAddress;
 	entry->TimeOut = (uint32_t)entryStruct->timeout;
 }
 
@@ -82,23 +82,23 @@ void Spw_Tx_getCurrentSendListConfig(const Spw_Tx *const tx,
 	uint32_t curSendCfg  = SPW_REGS->SPW_PKTTX1_CURSENDCFG;
 	uint32_t curSendRout = SPW_REGS->SPW_PKTTX1_CURSENDROUT;
 
-	config->sendListAddress = (Spw_Tx_SendListEntry *)
+	config->sendListAddress = (Spw_Tx_SendListEntry *)(uintptr_t)
 					  SPW_REGS->SPW_PKTTX1_CURSENDADDR;
 	config->sendListLength = (uint16_t)((curSendCfg &
 					     SPW_PKTTX1_CURSENDCFG_LEN_Msk) >>
 					    SPW_PKTTX1_CURSENDCFG_LEN_Pos);
 	config->routerByte[0]  = (uint8_t)((curSendRout &
-					    SPW_PKTTX1_NXTSENDROUT_BYTE1_Msk) >>
-					   SPW_PKTTX1_NXTSENDROUT_BYTE1_Pos);
+					    SPW_PKTTX1_CURSENDROUT_BYTE1_Msk) >>
+					   SPW_PKTTX1_CURSENDROUT_BYTE1_Pos);
 	config->routerByte[1]  = (uint8_t)((curSendRout &
-					    SPW_PKTTX1_NXTSENDROUT_BYTE2_Msk) >>
-					   SPW_PKTTX1_NXTSENDROUT_BYTE2_Pos);
+					    SPW_PKTTX1_CURSENDROUT_BYTE2_Msk) >>
+					   SPW_PKTTX1_CURSENDROUT_BYTE2_Pos);
 	config->routerByte[2]  = (uint8_t)((curSendRout &
-					    SPW_PKTTX1_NXTSENDROUT_BYTE3_Msk) >>
-					   SPW_PKTTX1_NXTSENDROUT_BYTE3_Pos);
+					    SPW_PKTTX1_CURSENDROUT_BYTE3_Msk) >>
+					   SPW_PKTTX1_CURSENDROUT_BYTE3_Pos);
 	config->routerByte[3]  = (uint8_t)((curSendRout &
-					    SPW_PKTTX1_NXTSENDROUT_BYTE4_Msk) >>
-					   SPW_PKTTX1_NXTSENDROUT_BYTE4_Pos);
+					    SPW_PKTTX1_CURSENDROUT_BYTE4_Msk) >>
+					   SPW_PKTTX1_CURSENDROUT_BYTE4_Pos);
 	// sendCondition, startValue, abortOngoingSendListWhenStarted are not
 	// available in current send list registers; set to defaults.
 	config->sendCondition			= (Spw_Tx_SendCondition)0;
@@ -125,10 +125,10 @@ void Spw_Tx_getSendListEntry(const Spw_Tx_SendListEntry *const entry,
 	entryStruct->escapeChar		= (uint8_t)entry->EscChar;
 	entryStruct->calculateHeaderCrc = entry->HCrc != 0U;
 	entryStruct->headerSize		= (uint8_t)entry->HSize;
-	entryStruct->headerAddress	= (uint8_t *)entry->HAddr;
+	entryStruct->headerAddress	= (uint8_t *)(uintptr_t)entry->HAddr;
 	entryStruct->calculateDataCrc	= entry->DCrc != 0U;
 	entryStruct->dataSize		= (uint32_t)entry->DSize;
-	entryStruct->dataAddress	= (uint8_t *)entry->DAddr;
+	entryStruct->dataAddress	= (uint8_t *)(uintptr_t)entry->DAddr;
 	entryStruct->timeout		= (uint32_t)entry->TimeOut;
 }
 

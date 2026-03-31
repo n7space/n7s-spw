@@ -8,8 +8,8 @@
 #ifndef N7S_SPW_H
 #define N7S_SPW_H
 
-#include "microchip_spw/plib_spw.h"
 #include "link.h"
+#include "microchip_spw/plib_spw.h"
 #include "rx.h"
 #include "tx.h"
 
@@ -35,7 +35,7 @@ typedef struct {
 	void *arg;
 } Spw_TxHandler;
 
-/// @brief Structure serving as a transmission end callback descriptor.
+/// @brief Structure serving as a reception callback descriptor.
 typedef struct {
 	/// @brief Callback function pointer.
 	Spw_RxCallback callback;
@@ -79,7 +79,7 @@ void Spw_setConfig(Spw *const spw, const Spw_Config *const config);
 /// @brief Function used to register a transmission end callback in the driver.
 /// @param[out] spw     Spacewire instance.
 /// @param[in] handler  Transmission end callback handler.
-void Spw_registerCallback(Spw *const spw, const Spw_TxHandler handler);
+void Spw_registerTxHandler(Spw *const spw, const Spw_TxHandler handler);
 
 /// @brief Function used to register a reception callback in the driver.
 /// @param[out] spw     Spacewire instance.

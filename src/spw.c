@@ -13,7 +13,7 @@ void Spw_init(Spw *const spw)
 
 	spw->txHandler.callback = NULL;
 	spw->txHandler.arg	= NULL;
-    spw->rxHandler.callback = NULL;
+	spw->rxHandler.callback = NULL;
 	spw->rxHandler.arg	= NULL;
 }
 
@@ -25,7 +25,7 @@ void Spw_setConfig(Spw *const spw, const Spw_Config *const config)
 	Spw_Tx_setConfig(&spw->tx, &config->tx);
 }
 
-void Spw_registerCallback(Spw *const spw, const Spw_TxHandler handler)
+void Spw_registerTxHandler(Spw *const spw, const Spw_TxHandler handler)
 {
 	spw->txHandler = handler;
 }

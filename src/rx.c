@@ -97,10 +97,9 @@ void Spw_Rx_getNextRxBufferConfig(const Spw_Rx *const rx,
 
 	uint32_t nxtBufCfg = SPW_REGS->SPW_PKTRX1_NXTBUFCFG;
 
-	config->rxDataAddress = (uint8_t *)SPW_REGS->SPW_PKTRX1_NXTBUFDATAADDR;
+	config->rxDataAddress = (uint8_t *)(uintptr_t)SPW_REGS->SPW_PKTRX1_NXTBUFDATAADDR;
 	config->rxDataLength  = SPW_REGS->SPW_PKTRX1_NXTBUFDATALEN;
-	config->rxBufferAddress = (Spw_Rx_RxBufferEntry *)
-					  SPW_REGS->SPW_PKTRX1_NXTBUFPKTADDR;
+	config->rxBufferAddress = (Spw_Rx_RxBufferEntry *)(uintptr_t)SPW_REGS->SPW_PKTRX1_NXTBUFPKTADDR;
 	config->rxBufferLength = (uint16_t)((nxtBufCfg &
 					     SPW_PKTRX1_NXTBUFCFG_MAXCNT_Msk) >>
 					    SPW_PKTRX1_NXTBUFCFG_MAXCNT_Pos);
@@ -126,7 +125,7 @@ void Spw_Rx_getStatus(const Spw_Rx *const rx, Spw_Rx_Status *const status)
 			   SPW_PKTRX1_STATUS_COUNT_Pos);
 	status->isIncomingPacketOngoing	      = (rawStatus &
 						 SPW_PKTRX_STATUS_PACKET) != 0U;
-	status->isPrevoiusReceiveBufferLocked = (rawStatus &
+	status->isPreviousReceiveBufferLocked = (rawStatus &
 						 SPW_PKTRX_STATUS_LOCKED) != 0U;
 	status->isNextReceiveBufferArmed = (rawStatus & SPW_PKTRX_STATUS_ARM) !=
 					   0U;
@@ -164,7 +163,7 @@ void Spw_Rx_getRxBufferEntry(const Spw_Rx_RxBufferEntry *const entry,
 	entryStruct->isPacketContinued = entry->Cont != 0U;
 	entryStruct->isPacketSplit     = entry->Split != 0U;
 	entryStruct->crc	       = (uint8_t)entry->Crc;
-	entryStruct->dataAddress       = (uint8_t *)entry->DAddr;
+	entryStruct->dataAddress       = (uint8_t *)(uintptr_t)entry->DAddr;
 	entryStruct->dataLength	       = (uint32_t)entry->DSize;
 	entryStruct->packetTime	       = (uint32_t)entry->Etime;
 }
@@ -174,7 +173,7 @@ void Spw_Rx_getStructuredIrq(const uint32_t rxIrqStatusValue,
 {
 	status->receivedBufferActivatedIrqOccurred =
 		(rxIrqStatusValue & (uint32_t)SPW_PKTRX_INT_MASK_ACT) != 0U;
-	status->incomingPackedDiscardedIrqOccurred =
+	status->incomingPacketDiscardedIrqOccurred =
 		(rxIrqStatusValue & (uint32_t)SPW_PKTRX_INT_MASK_DISCARD) != 0U;
 	status->incomingEepDetectedIrqOccurred =
 		(rxIrqStatusValue & (uint32_t)SPW_PKTRX_INT_MASK_EEP) != 0U;

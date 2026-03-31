@@ -12,8 +12,8 @@
 extern "C" {
 #endif
 
-#include "stdbool.h"
-#include "stdint.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 #include "microchip_spw/plib_spw_pkttx.h"
 
@@ -155,7 +155,6 @@ typedef struct {
 	uint32_t irqMaskEnable;
 	/// @brief Interrupt mask for disable.
 	uint32_t irqMaskDisable;
-	uint32_t irqMask;
 } Spw_Tx_Config;
 
 /// @brief Initializes a device descriptor for Spacewire tx.
