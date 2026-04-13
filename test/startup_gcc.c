@@ -1,0 +1,127 @@
+#include <stdbool.h>
+#include <stdint.h>
+
+#include "device.h"
+#include <Mpu/Mpu.h>
+#include <Nvic/Nvic.h>
+#include <Scb/Scb.h>
+
+extern uint32_t _sidata;    /* LMA of .data in flash        */
+extern uint32_t _sdata;     /* VMA start of .data in RAM    */
+extern uint32_t _edata;     /* VMA end   of .data           */
+extern uint32_t _sbss;      /* start of .bss                */
+extern uint32_t _ebss;      /* end   of .bss                */
+extern uint32_t __svectors; /* vector table base in flash   */
+
+extern void __libc_init_array(void);
+extern int  main(void);
+
+// FPU coprocessor access register
+#define SCB_CPACR_REG  (*(volatile uint32_t *)0xE000ED88u)
+
+// ECC seed-write chunk size = 16 VFP double regs × 8 B = 128 B
+#define ECC_CHUNK_SIZE 0x80u
+
+// FPU enable – must happen before any VLDM/VSTM (used in ECC init).
+static void fpu_enable(void)
+{
+    SCB_CPACR_REG |= (0xFu << 20u);
+    asm volatile("dsb" ::: "memory");
+    asm volatile("isb" ::: "memory");
+}
+
+/* --------------------------------------------------------------------------
+ * FlexRAM ECC seed writes.
+ * The SAMRH71 FlexRAM HECC raises a fault on any read of an uninitialised
+ * word, including stack accesses.  Seed every location by reading into VFP
+ * registers (ECC disabled) then writing back (ECC enabled) before use.
+ * -------------------------------------------------------------------------- */
+static void __attribute__((noinline)) ecc_read_chunk(uint32_t addr)
+{
+    asm volatile(
+        "MOV  r8, %[a]\n"
+        "PLD  [r8, #0xC0]\n"
+        "VLDM r8, {d0-d15}\n"
+        : : [a] "r" (addr) : "r8"
+    );
+}
+
+static void __attribute__((noinline)) ecc_write_chunk(uint32_t addr)
+{
+    asm volatile(
+        "MOV  r8, %[a]\n"
+        "VSTM r8, {d0-d15}\n"
+        : : [a] "r" (addr) : "r8"
+    );
+}
+
+static void __attribute__((optimize("-O1"))) flexram_ecc_initialize(void)
+{
+    asm volatile("dsb" ::: "memory");
+    asm volatile("isb" ::: "memory");
+    for (uint32_t addr = FLEXRAM_ADDR;
+         addr < (FLEXRAM_ADDR + FlexRAM_SIZE);
+         addr += ECC_CHUNK_SIZE)
+    {
+        ecc_read_chunk(addr);
+        asm volatile("dsb" ::: "memory");
+        asm volatile("isb" ::: "memory");
+        ecc_write_chunk(addr);
+        asm volatile("dsb" ::: "memory");
+        asm volatile("isb" ::: "memory");
+    }
+    asm volatile("dsb" ::: "memory");
+    asm volatile("isb" ::: "memory");
+}
+
+void __attribute__((noreturn, section(".text.Reset_Handler")))
+Reset_Handler(void)
+{
+    // 1. Enable FPU before any VLDM/VSTM
+    fpu_enable();
+
+    // 2. Seed FlexRAM ECC (must come before .bss zero / stack use)
+    flexram_ecc_initialize();
+
+    // 3. Copy .data from flash to RAM
+    {
+        uint32_t *src = &_sidata;
+        uint32_t *dst = &_sdata;
+        const uint32_t *end = &_edata;
+        while (dst < end) { *dst++ = *src++; }
+    }
+
+    // 4. Zero .bss
+    {
+        uint32_t *dst = &_sbss;
+        const uint32_t *end = &_ebss;
+        while (dst < end) { *dst++ = 0u; }
+    }
+
+    // 5. Relocate vector table
+    Nvic_relocateVectorTable(&__svectors);
+
+    // 6. C runtime constructors
+    __libc_init_array();
+
+    // 7. MPU – enable with default privileged map (PRIVDEFENA)
+    {
+        Mpu mpu;
+        Mpu_init(&mpu);
+        const Mpu_Config mpuCfg = {
+            .isEnabled                 = true,
+            .isDefaultMemoryMapEnabled = true,
+            .isMpuEnabledInHandlers    = false,
+        };
+        Mpu_setConfig(&mpu, &mpuCfg);
+    }
+
+    // 8. Enable I-cache and D-cache
+    Scb_enableICache();
+    Scb_enableDCache();
+
+    // 9. Run application
+    (void)main();
+
+    while (true) { }
+}
