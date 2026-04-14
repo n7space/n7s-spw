@@ -1,10 +1,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "device.h"
-#include <Mpu/Mpu.h>
 #include <Nvic/Nvic.h>
 #include <Scb/Scb.h>
+
+#include "device.h"
 
 extern uint32_t _sidata;    /* LMA of .data in flash        */
 extern uint32_t _sdata;     /* VMA start of .data in RAM    */
@@ -14,10 +14,10 @@ extern uint32_t _ebss;      /* end   of .bss                */
 extern uint32_t __svectors; /* vector table base in flash   */
 
 extern void __libc_init_array(void);
-extern int  main(void);
+extern int main(void);
 
 // FPU coprocessor access register
-#define SCB_CPACR_REG  (*(volatile uint32_t *)0xE000ED88u)
+#define SCB_CPACR_REG (*(volatile uint32_t*)0xE000ED88u)
 
 // ECC seed-write chunk size = 16 VFP double regs × 8 B = 128 B
 #define ECC_CHUNK_SIZE 0x80u
@@ -25,9 +25,9 @@ extern int  main(void);
 // FPU enable – must happen before any VLDM/VSTM (used in ECC init).
 static void fpu_enable(void)
 {
-    SCB_CPACR_REG |= (0xFu << 20u);
-    asm volatile("dsb" ::: "memory");
-    asm volatile("isb" ::: "memory");
+  SCB_CPACR_REG |= (0xFu << 20u);
+  asm volatile("dsb" ::: "memory");
+  asm volatile("isb" ::: "memory");
 }
 
 /* --------------------------------------------------------------------------
@@ -38,90 +38,79 @@ static void fpu_enable(void)
  * -------------------------------------------------------------------------- */
 static void __attribute__((noinline)) ecc_read_chunk(uint32_t addr)
 {
-    asm volatile(
-        "MOV  r8, %[a]\n"
-        "PLD  [r8, #0xC0]\n"
-        "VLDM r8, {d0-d15}\n"
-        : : [a] "r" (addr) : "r8"
-    );
+  asm volatile("MOV  r8, %[a]\n"
+               "PLD  [r8, #0xC0]\n"
+               "VLDM r8, {d0-d15}\n"
+    :
+    : [a] "r"(addr)
+    : "r8");
 }
 
 static void __attribute__((noinline)) ecc_write_chunk(uint32_t addr)
 {
-    asm volatile(
-        "MOV  r8, %[a]\n"
-        "VSTM r8, {d0-d15}\n"
-        : : [a] "r" (addr) : "r8"
-    );
+  asm volatile("MOV  r8, %[a]\n"
+               "VSTM r8, {d0-d15}\n"
+    :
+    : [a] "r"(addr)
+    : "r8");
 }
 
 static void __attribute__((optimize("-O1"))) flexram_ecc_initialize(void)
 {
+  asm volatile("dsb" ::: "memory");
+  asm volatile("isb" ::: "memory");
+  for (uint32_t addr = FLEXRAM_ADDR; addr < (FLEXRAM_ADDR + FlexRAM_SIZE); addr += ECC_CHUNK_SIZE)
+  {
+    ecc_read_chunk(addr);
     asm volatile("dsb" ::: "memory");
     asm volatile("isb" ::: "memory");
-    for (uint32_t addr = FLEXRAM_ADDR;
-         addr < (FLEXRAM_ADDR + FlexRAM_SIZE);
-         addr += ECC_CHUNK_SIZE)
-    {
-        ecc_read_chunk(addr);
-        asm volatile("dsb" ::: "memory");
-        asm volatile("isb" ::: "memory");
-        ecc_write_chunk(addr);
-        asm volatile("dsb" ::: "memory");
-        asm volatile("isb" ::: "memory");
-    }
+    ecc_write_chunk(addr);
     asm volatile("dsb" ::: "memory");
     asm volatile("isb" ::: "memory");
+  }
+  asm volatile("dsb" ::: "memory");
+  asm volatile("isb" ::: "memory");
 }
 
-void __attribute__((noreturn, section(".text.Reset_Handler")))
-Reset_Handler(void)
+void __attribute__((noreturn, section(".text.Reset_Handler"))) Reset_Handler(void)
 {
-    // 1. Enable FPU before any VLDM/VSTM
-    fpu_enable();
+  // 1. Enable FPU before any VLDM/VSTM
+  fpu_enable();
 
-    // 2. Seed FlexRAM ECC (must come before .bss zero / stack use)
-    flexram_ecc_initialize();
+  // 2. Seed FlexRAM ECC (must come before .bss zero / stack use)
+  flexram_ecc_initialize();
 
-    // 3. Copy .data from flash to RAM
+  // 3. Copy .data from flash to RAM
+  {
+    uint32_t* src = &_sidata;
+    uint32_t* dst = &_sdata;
+    const uint32_t* end = &_edata;
+    while (dst < end)
     {
-        uint32_t *src = &_sidata;
-        uint32_t *dst = &_sdata;
-        const uint32_t *end = &_edata;
-        while (dst < end) { *dst++ = *src++; }
+      *dst++ = *src++;
     }
+  }
 
-    // 4. Zero .bss
+  // 4. Zero .bss
+  {
+    uint32_t* dst = &_sbss;
+    const uint32_t* end = &_ebss;
+    while (dst < end)
     {
-        uint32_t *dst = &_sbss;
-        const uint32_t *end = &_ebss;
-        while (dst < end) { *dst++ = 0u; }
+      *dst++ = 0u;
     }
+  }
 
-    // 5. Relocate vector table
-    Nvic_relocateVectorTable(&__svectors);
+  // 5. Relocate vector table
+  Nvic_relocateVectorTable(&__svectors);
 
-    // 6. C runtime constructors
-    __libc_init_array();
+  // 6. C runtime constructors
+  __libc_init_array();
 
-    // 7. MPU – enable with default privileged map (PRIVDEFENA)
-    {
-        Mpu mpu;
-        Mpu_init(&mpu);
-        const Mpu_Config mpuCfg = {
-            .isEnabled                 = true,
-            .isDefaultMemoryMapEnabled = true,
-            .isMpuEnabledInHandlers    = false,
-        };
-        Mpu_setConfig(&mpu, &mpuCfg);
-    }
+  // 7. Run application
+  (void)main();
 
-    // 8. Enable I-cache and D-cache
-    Scb_enableICache();
-    Scb_enableDCache();
-
-    // 9. Run application
-    (void)main();
-
-    while (true) { }
+  while (true)
+  {
+  }
 }

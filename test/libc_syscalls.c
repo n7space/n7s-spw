@@ -1,7 +1,9 @@
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <stdbool.h>
+#include <stdio.h>
+
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #include "device.h"
 
 #ifdef __cplusplus
@@ -13,16 +15,19 @@ extern void _exit(int status);
 void _exit(int status)
 {
 #ifdef __DEBUG
-    __BKPT(0);
+  __BKPT(0);
 #endif
 
-    while (true)
-    {
-    }
+  while (true)
+  {
+  }
 }
 
-void __attribute__((weak)) _init(void) {}
-void __attribute__((weak)) _fini(void) {}
+void __attribute__((weak)) _init(void)
+{}
+
+void __attribute__((weak)) _fini(void)
+{}
 
 #ifdef __cplusplus
 }
