@@ -1,4 +1,4 @@
-#include "definitions.h"
+#include <stdbool.h>
 #include "interrupts.h"
 
 void __attribute__((noreturn, weak)) NonMaskableInt_Handler(void)

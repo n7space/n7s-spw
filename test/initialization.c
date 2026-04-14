@@ -1,6 +1,9 @@
-#include "definitions.h"
 #include "device.h"
 #include "interrupts.h"
+#include <Matrix/Matrix.h>
+#include <Nvic/Nvic.h>
+#include <Wdt/Wdt.h>
+#include <spw.h>
 
 Spw g_spw;
 

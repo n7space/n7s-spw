@@ -1,9 +1,9 @@
 /*
- * Linker script for ATSAMRH71F20C – arm-none-eabi-gcc
+ * Linker script for ATSAMRH71F20C
  *
  *   rom         (flash HEFC) : 0x10000000 / 128 KB
  *   ram         (FlexRAM)    : 0x21000000 / 512 KB
- *   ram_nocache              : 0x21080000 / 256 KB  non-cached alias, use for SPW DMA buffers
+ *   ram_nocache              : 0x21080000 / 256 KB
  */
 
 OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")

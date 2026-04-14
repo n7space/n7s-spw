@@ -2,8 +2,10 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "definitions.h"
 #include "device.h"
+#include <spw.h>
+
+void SYS_Initialize(void* data);
 
 #define SPW_PKTRX_ROUTER_PORT 9U // loopback destination
 

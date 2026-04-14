@@ -1,6 +1,6 @@
+#include <stdbool.h>
 #include "interrupts.h"
 
-#include "definitions.h"
 #include "device_vectors.h"
 
 extern uint32_t _stack;

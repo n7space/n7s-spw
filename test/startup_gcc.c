@@ -30,12 +30,7 @@ static void fpu_enable(void)
   asm volatile("isb" ::: "memory");
 }
 
-/* --------------------------------------------------------------------------
- * FlexRAM ECC seed writes.
- * The SAMRH71 FlexRAM HECC raises a fault on any read of an uninitialised
- * word, including stack accesses.  Seed every location by reading into VFP
- * registers (ECC disabled) then writing back (ECC enabled) before use.
- * -------------------------------------------------------------------------- */
+// FlexRAM ECC seed writes.
 static void __attribute__((noinline)) ecc_read_chunk(uint32_t addr)
 {
   asm volatile("MOV  r8, %[a]\n"
