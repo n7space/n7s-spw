@@ -13,7 +13,6 @@ extern uint32_t _sbss;      /* start of .bss                */
 extern uint32_t _ebss;      /* end   of .bss                */
 extern uint32_t __svectors; /* vector table base in flash   */
 
-extern void __libc_init_array(void);
 extern int main(void);
 
 // FPU coprocessor access register
@@ -99,10 +98,7 @@ void __attribute__((noreturn, section(".text.Reset_Handler"))) Reset_Handler(voi
   // 5. Relocate vector table
   Nvic_relocateVectorTable(&__svectors);
 
-  // 6. C runtime constructors
-  __libc_init_array();
-
-  // 7. Run application
+  // 6. Run application
   (void)main();
 
   while (true)

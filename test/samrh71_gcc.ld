@@ -35,34 +35,11 @@ SECTIONS
     . = ALIGN(4);
     *(.text .text.*)
     *(.rodata .rodata.*)
-    *(.ARM.extab* .gnu.linkonce.armextab.*)
-
-    /* constructor / destructor tables for __libc_init_array */
-    KEEP(*(.init))
-    __preinit_array_start = .;
-    KEEP(*(.preinit_array))
-    __preinit_array_end   = .;
-    __init_array_start = .;
-    KEEP(*(SORT(.init_array.*)))
-    KEEP(*(.init_array))
-    __init_array_end   = .;
-    KEEP(*(.fini))
-    __fini_array_start = .;
-    KEEP(*(.fini_array))
-    KEEP(*(SORT(.fini_array.*)))
-    __fini_array_end   = .;
     . = ALIGN(4);
   } > rom
 
-  .ARM.exidx :
-  {
-    __exidx_start = .;
-    *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-    __exidx_end   = .;
-  } > rom
-
   . = ALIGN(4);
-  _etext = .;   /* LMA of initialised data */
+  _etext = .;
 
   /* ---- non-cached section (VMA in ram_nocache, loads from rom) ----------
    * Place SPW DMA buffers here with __attribute__((section(".ram_nocache")))
@@ -101,5 +78,5 @@ SECTIONS
   _end = .;
   PROVIDE(end = _end);
 
-  /DISCARD/ : { *(.note.GNU-stack) }
+  /DISCARD/ : { *(.note.GNU-stack) *(.ARM.exidx*) *(.ARM.extab*) *(.init) *(.fini) *(.preinit_array) *(.init_array*) *(.fini_array*) }
 }
