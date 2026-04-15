@@ -41,9 +41,7 @@ SECTIONS
   . = ALIGN(4);
   _etext = .;
 
-  /* ---- non-cached section (VMA in ram_nocache, loads from rom) ----------
-   * Place SPW DMA buffers here with __attribute__((section(".ram_nocache")))
-   * ----------------------------------------------------------------------- */
+  /* ---- non-cached section ----------------------------------------------- */
   .ram_nocache (NOLOAD) :
   {
     . = ALIGN(4);

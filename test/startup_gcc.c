@@ -6,12 +6,12 @@
 
 #include "device.h"
 
-extern uint32_t _sidata;    /* LMA of .data in flash        */
-extern uint32_t _sdata;     /* VMA start of .data in RAM    */
-extern uint32_t _edata;     /* VMA end   of .data           */
-extern uint32_t _sbss;      /* start of .bss                */
-extern uint32_t _ebss;      /* end   of .bss                */
-extern uint32_t __svectors; /* vector table base in flash   */
+extern uint32_t _sidata;
+extern uint32_t _sdata;
+extern uint32_t _edata;
+extern uint32_t _sbss;
+extern uint32_t _ebss;
+extern uint32_t __svectors;
 
 extern int main(void);
 
