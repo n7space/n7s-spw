@@ -63,8 +63,8 @@ def run_test_project(
         gdbmi.exit()
 
 def test_n7s_spw():
-    remote_gdb_server = os.getenv("SAMRH71_REMOTE_GDBSERVER", default="127.0.0.1")
-    run_test_project(remote_gdb_server, 'build/test/test.elf', 'main.c', '184')
+    remote_gdb_server = os.getenv("SAMRH71_REMOTE_GDBSERVER", default="127.0.0.1:2331")
+    run_test_project(remote_gdb_server, 'build/test/test.elf', 'main.c', '198')
 
 if __name__ == "__main__":
     test_n7s_spw()

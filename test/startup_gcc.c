@@ -12,6 +12,8 @@ extern uint32_t _edata;
 extern uint32_t _sbss;
 extern uint32_t _ebss;
 extern uint32_t __svectors;
+extern uint32_t _stack;
+extern uint32_t _stack_nocache;
 
 extern int main(void);
 
@@ -37,7 +39,8 @@ static void __attribute__((noinline)) ecc_read_chunk(uint32_t addr)
                "VLDM r8, {d0-d15}\n"
     :
     : [a] "r"(addr)
-    : "r8");
+    : "r8", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7",
+      "d8", "d9", "d10", "d11", "d12", "d13", "d14", "d15", "memory");
 }
 
 static void __attribute__((noinline)) ecc_write_chunk(uint32_t addr)
@@ -46,7 +49,7 @@ static void __attribute__((noinline)) ecc_write_chunk(uint32_t addr)
                "VSTM r8, {d0-d15}\n"
     :
     : [a] "r"(addr)
-    : "r8");
+    : "r8", "memory");
 }
 
 static void __attribute__((optimize("-O1"))) flexram_ecc_initialize(void)
@@ -71,8 +74,12 @@ void __attribute__((noreturn, section(".text.Reset_Handler"))) Reset_Handler(voi
   // 1. Enable FPU before any VLDM/VSTM
   fpu_enable();
 
-  // 2. Seed FlexRAM ECC (must come before .bss zero / stack use)
+  // 2. Seed FlexRAM ECC (must come before .bss zero / stack use).
+  //    The loop overwrites all of FlexRAM including the current stack area,
+  //    so temporarily switch MSP to the ECC-free ram_nocache region.
+  asm volatile("MSR msp, %0" :: "r"(&_stack_nocache) : "memory");
   flexram_ecc_initialize();
+  asm volatile("MSR msp, %0" :: "r"(&_stack) : "memory");
 
   // 3. Copy .data from flash to RAM
   {

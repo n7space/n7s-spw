@@ -131,13 +131,14 @@ int main(void)
   Spw_Tx_setNextSendList(&g_spw.tx, &txListCfg);
 
   // Wait for TX to complete.
-  while (!tx_done)
+  volatile uint32_t tx_timeout = 2000000U;
+  while (!tx_done && (tx_timeout-- > 0U))
   {
   }
 
   // Wait for RX to complete.
-  volatile uint32_t timeout = 2000000U;
-  while (!rx_done && (timeout-- > 0U))
+  volatile uint32_t rx_timeout = 2000000U;
+  while (!rx_done && (rx_timeout-- > 0U))
   {
   }
 
@@ -170,6 +171,19 @@ int main(void)
     {
       Spw_Rx_RxBufferEntryStruct entry;
       Spw_Rx_getRxBufferEntry(&rx_info[i], &entry);
+
+      if (entry.dataLength != PACKET_SIZE)
+      {
+        test_result = false;
+        break;
+      }
+
+      const uint8_t* const rx_buf_end = rx_buf + RX_BUF_SIZE;
+      if ((entry.dataAddress < rx_buf) || (entry.dataAddress + entry.dataLength > rx_buf_end))
+      {
+        test_result = false;
+        break;
+      }
 
       const uint8_t* data = entry.dataAddress;
       if (data[0] != (uint8_t)(i & 0xFFU))

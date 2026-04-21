@@ -12,4 +12,5 @@ A wrapper for Microchip's spacewire driver for SAMRH71, created as a part of "Mo
 
 # Executing tests
 
+Initialize submodule `git submodule update --init --recursive`
 To execute tests simply execute `make test`

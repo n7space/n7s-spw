@@ -17,7 +17,8 @@ MEMORY
   ram_nocache (WX!R) : ORIGIN = 0x21080000, LENGTH = 0x00040000
 }
 
-_stack = ORIGIN(ram) + LENGTH(ram);
+_stack         = ORIGIN(ram)         + LENGTH(ram);
+_stack_nocache = ORIGIN(ram_nocache) + LENGTH(ram_nocache);
 
 SECTIONS
 {

@@ -61,7 +61,7 @@ TEST_ELF := build/test/test.elf
 test: check_syntax environment test-clean test-build test-run
 
 environment:
-	python3 -mvenv env
+	python3 -m venv env
 	./env/bin/pip install -r requirements.txt
 
 check_syntax:
