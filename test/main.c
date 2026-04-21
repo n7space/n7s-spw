@@ -1,9 +1,9 @@
+#include <spw.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 
 #include "device.h"
-#include <spw.h>
 
 void SYS_Initialize(void* data);
 

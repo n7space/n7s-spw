@@ -1,7 +1,6 @@
 /*
  * Linker script for ATSAMRH71F20C
  *
- *   rom         (flash HEFC) : 0x10000000 / 128 KB
  *   ram         (FlexRAM)    : 0x21000000 / 512 KB
  *   ram_nocache              : 0x21080000 / 256 KB
  */
@@ -12,13 +11,11 @@ ENTRY(Reset_Handler)
 
 MEMORY
 {
-  rom         (LRX)  : ORIGIN = 0x10000000, LENGTH = 0x00020000
   ram         (WX!R) : ORIGIN = 0x21000000, LENGTH = 0x00080000
   ram_nocache (WX!R) : ORIGIN = 0x21080000, LENGTH = 0x00040000
 }
 
-_stack         = ORIGIN(ram)         + LENGTH(ram);
-_stack_nocache = ORIGIN(ram_nocache) + LENGTH(ram_nocache);
+_stack = ORIGIN(ram) + LENGTH(ram);
 
 SECTIONS
 {
@@ -28,7 +25,7 @@ SECTIONS
     __svectors = .;
     KEEP(*(.vectors .vectors.*))
     KEEP(*(.isr_vector))
-  } > rom
+  } > ram
 
   /* ---- code and read-only data ----------------------------------------- */
   .text :
@@ -37,30 +34,23 @@ SECTIONS
     *(.text .text.*)
     *(.rodata .rodata.*)
     . = ALIGN(4);
-  } > rom
+  } > ram
 
-  . = ALIGN(4);
-  _etext = .;
+  /* ---- initialised data ------------------------------------------------ */
+  .data :
+  {
+    . = ALIGN(4);
+    *(.data .data.*)
+    . = ALIGN(4);
+  } > ram
 
-  /* ---- non-cached section ----------------------------------------------- */
+  /* ---- non-cached section ---------------------------------------------- */
   .ram_nocache (NOLOAD) :
   {
     . = ALIGN(4);
     *(.ram_nocache .ram_nocache.*)
     . = ALIGN(4);
   } > ram_nocache
-
-  /* ---- initialised data (LMA in rom, VMA in ram) ----------------------- */
-  .data : AT(_etext)
-  {
-    . = ALIGN(4);
-    _sdata = .;
-    *(.data .data.*)
-    . = ALIGN(4);
-    _edata = .;
-  } > ram
-
-  _sidata = LOADADDR(.data);
 
   /* ---- zero-initialised data ------------------------------------------- */
   .bss (NOLOAD) :
