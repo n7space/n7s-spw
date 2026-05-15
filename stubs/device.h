@@ -15,7 +15,7 @@
 #include "microchip_spw/spw.h"
 
 /* Peripheral base pointer */
-#define SPW_BASE_ADDRESS  (0x40000000UL)
-#define SPW_REGS          ((spw_registers_t *)SPW_BASE_ADDRESS)
+#define SPW_BASE_ADDRESS (0x40040000u)
+#define SPW_REGS         ((spw_registers_t*)SPW_BASE_ADDRESS)
 
 #endif
