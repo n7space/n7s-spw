@@ -4,6 +4,7 @@
 
 #include "router.h"
 
+#include <assert.h>
 #include "device.h"
 #include "microchip_spw/plib_spw_router.h"
 
@@ -34,12 +35,11 @@ void Spw_Router_getStatus(Spw_Router_Status* const status)
 
 void Spw_Router_getTableEntry(const uint8_t id, Spw_Router_TableEntry* const entry)
 {
-  if (id >= 32U)
-  {
-    const uint32_t raw = SPW_REGS->SPW_ROUTER_TABLE[id - 32U];
-    entry->address = (uint8_t)(raw & SPW_ROUTER_TABLE_ADDR_Msk);
-    entry->deleteHeaderByte = (raw & SPW_ROUTER_TABLE_DELHEAD_Msk) != 0U;
-  }
+  assert(id >= 32U);
+
+  const uint32_t raw = SPW_REGS->SPW_ROUTER_TABLE[id - 32U];
+  entry->address = (uint8_t)(raw & SPW_ROUTER_TABLE_ADDR_Msk);
+  entry->deleteHeaderByte = (raw & SPW_ROUTER_TABLE_DELHEAD_Msk) != 0U;
 }
 
 void Spw_Router_setTableEntry(const uint8_t id, const Spw_Router_TableEntry* const entry)
