@@ -56,15 +56,15 @@ TEST_OBJS := $(patsubst %.c, build/test/%.o, $(TEST_SRCS))
 
 TEST_ELF := build/test/test.elf
 
-.PHONY: check_syntax environment test-clean test-build test-run
+.PHONY: check-syntax environment test-clean test-build test-run
 
-test: check_syntax environment test-clean test-build test-run
+test: check-syntax environment test-clean test-build test-run
 
 environment:
 	python3 -m venv env
 	./env/bin/pip install -r requirements.txt
 
-check_syntax:
+check-syntax:
 	@for src in $(SRCS); do \
 		$(CC) $(CFLAGS) $(INCLUDES) $$src || exit 1; \
 	done
