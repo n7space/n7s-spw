@@ -44,6 +44,8 @@ void Spw_Router_getTableEntry(const uint8_t id, Spw_Router_TableEntry* const ent
 
 void Spw_Router_setTableEntry(const uint8_t id, const Spw_Router_TableEntry* const entry)
 {
+  assert(id >= 32U);
+
   SPW_ROUTER_RoutingTableEntrySet(
     id, entry->deleteHeaderByte, (SPW_ROUTER_PHYS_ADDR)entry->address);
 }
