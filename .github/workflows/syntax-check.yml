@@ -10,4 +10,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run syntax check
-        run: make check_syntax
+        run: make check-syntax
