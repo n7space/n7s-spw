@@ -212,4 +212,6 @@ void Spw_Tx_getStatus(Spw_Tx* const tx, Spw_Tx_Status* const status)
   status->isNextSendListPending = (rawStatus & SPW_PKTTX_STATUS_PENDING) != 0U;
   status->isCurrentSendListActive = (rawStatus & SPW_PKTTX_STATUS_ACT) != 0U;
   status->isNextSendListArmed = (rawStatus & SPW_PKTTX_STATUS_ARM) != 0U;
+
+  SPW_PKTTX_UnlockStatus();
 }
