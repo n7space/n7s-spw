@@ -66,8 +66,6 @@ static inline void writeIrqClear(SPW_LINK id, uint32_t mask)
   {
     SPW_REGS->SPW_LINK2_PI_C = mask;
   }
-
-  return 0;
 }
 
 static inline uint32_t readDistIrq(SPW_LINK id)
@@ -108,8 +106,6 @@ static inline void writeDistIrqClear(SPW_LINK id, uint32_t mask)
   {
     SPW_REGS->SPW_LINK2_DISTINTPI_C = mask;
   }
-
-  return 0;
 }
 
 static inline uint32_t readDistAckIrq(SPW_LINK id)
@@ -150,8 +146,6 @@ static inline void writeDistAckIrqClear(SPW_LINK id, uint32_t mask)
   {
     SPW_REGS->SPW_LINK2_DISTACKPI_C = mask;
   }
-
-  return 0;
 }
 
 void Spw_Link_init(Spw_Link* const link, const SPW_LINK id)
