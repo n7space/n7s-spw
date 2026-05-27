@@ -186,8 +186,8 @@ void Spw_Link_setConfig(const Spw_Link* const link, const Spw_Link_Config* const
 
 void Spw_Link_getConfig(const Spw_Link* const link, Spw_Link_Config* const config)
 {
-  uint32_t clkdiv;
-  uint32_t cfg;
+  uint32_t clkdiv = 0;
+  uint32_t cfg = 0;
 
   if (link->id == SPW_LINK_1)
   {
@@ -198,6 +198,10 @@ void Spw_Link_getConfig(const Spw_Link* const link, Spw_Link_Config* const confi
   {
     clkdiv = SPW_REGS->SPW_LINK2_CLKDIV;
     cfg = SPW_REGS->SPW_LINK2_CFG;
+  }
+  else
+  {
+    return;
   }
 
   config->txInitDiv
