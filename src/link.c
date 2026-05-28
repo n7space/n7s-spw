@@ -24,12 +24,15 @@
 #include "link.h"
 
 #include "device.h"
+#include <assert.h>
 
 #define SWRESET_ARM_PATTERN     0x4D616A6FU
 #define SWRESET_TRIGGER_PATTERN 0x72546F6DU
 
 static inline uint32_t readIrq(SPW_LINK id)
 {
+  assert(id == SPW_LINK_1 || id == SPW_LINK_2);
+
   if (id == SPW_LINK_1)
   {
     return SPW_REGS->SPW_LINK1_PI_R;
@@ -44,6 +47,8 @@ static inline uint32_t readIrq(SPW_LINK id)
 
 static inline uint32_t readIrqMasked(SPW_LINK id)
 {
+  assert(id == SPW_LINK_1 || id == SPW_LINK_2);
+
   if (id == SPW_LINK_1)
   {
     return SPW_REGS->SPW_LINK1_PI_RM;
@@ -58,6 +63,8 @@ static inline uint32_t readIrqMasked(SPW_LINK id)
 
 static inline void writeIrqClear(SPW_LINK id, uint32_t mask)
 {
+  assert(id == SPW_LINK_1 || id == SPW_LINK_2);
+
   if (id == SPW_LINK_1)
   {
     SPW_REGS->SPW_LINK1_PI_C = mask;
@@ -70,6 +77,8 @@ static inline void writeIrqClear(SPW_LINK id, uint32_t mask)
 
 static inline uint32_t readDistIrq(SPW_LINK id)
 {
+  assert(id == SPW_LINK_1 || id == SPW_LINK_2);
+
   if (id == SPW_LINK_1)
   {
     return SPW_REGS->SPW_LINK1_DISTINTPI_R;
@@ -84,6 +93,8 @@ static inline uint32_t readDistIrq(SPW_LINK id)
 
 static inline uint32_t readDistIrqMasked(SPW_LINK id)
 {
+  assert(id == SPW_LINK_1 || id == SPW_LINK_2);
+
   if (id == SPW_LINK_1)
   {
     return SPW_REGS->SPW_LINK1_DISTINTPI_RM;
@@ -98,6 +109,8 @@ static inline uint32_t readDistIrqMasked(SPW_LINK id)
 
 static inline void writeDistIrqClear(SPW_LINK id, uint32_t mask)
 {
+  assert(id == SPW_LINK_1 || id == SPW_LINK_2);
+
   if (id == SPW_LINK_1)
   {
     SPW_REGS->SPW_LINK1_DISTINTPI_C = mask;
@@ -110,6 +123,8 @@ static inline void writeDistIrqClear(SPW_LINK id, uint32_t mask)
 
 static inline uint32_t readDistAckIrq(SPW_LINK id)
 {
+  assert(id == SPW_LINK_1 || id == SPW_LINK_2);
+
   if (id == SPW_LINK_1)
   {
     return SPW_REGS->SPW_LINK1_DISTACKPI_R;
@@ -124,6 +139,8 @@ static inline uint32_t readDistAckIrq(SPW_LINK id)
 
 static inline uint32_t readDistAckIrqMasked(SPW_LINK id)
 {
+  assert(id == SPW_LINK_1 || id == SPW_LINK_2);
+
   if (id == SPW_LINK_1)
   {
     return SPW_REGS->SPW_LINK1_DISTACKPI_RM;
@@ -138,6 +155,8 @@ static inline uint32_t readDistAckIrqMasked(SPW_LINK id)
 
 static inline void writeDistAckIrqClear(SPW_LINK id, uint32_t mask)
 {
+  assert(id == SPW_LINK_1 || id == SPW_LINK_2);
+
   if (id == SPW_LINK_1)
   {
     SPW_REGS->SPW_LINK1_DISTACKPI_C = mask;
@@ -150,6 +169,7 @@ static inline void writeDistAckIrqClear(SPW_LINK id, uint32_t mask)
 
 void Spw_Link_init(Spw_Link* const link, const SPW_LINK id)
 {
+  assert(id == SPW_LINK_1 || id == SPW_LINK_2);
   SPW_LINK_Initialize();
 
   link->id = id;
@@ -157,6 +177,8 @@ void Spw_Link_init(Spw_Link* const link, const SPW_LINK id)
 
 void Spw_Link_setConfig(const Spw_Link* const link, const Spw_Link_Config* const config)
 {
+  assert(link->id == SPW_LINK_1 || link->id == SPW_LINK_2);
+
   if (link->id == SPW_LINK_1)
   {
     SPW_REGS->SPW_LINK1_CLKDIV = SPW_LINK1_CLKDIV_TXINITDIV(config->txInitDiv)
@@ -186,6 +208,8 @@ void Spw_Link_setConfig(const Spw_Link* const link, const Spw_Link_Config* const
 
 void Spw_Link_getConfig(const Spw_Link* const link, Spw_Link_Config* const config)
 {
+  assert(link->id == SPW_LINK_1 || link->id == SPW_LINK_2);
+
   uint32_t clkdiv = 0;
   uint32_t cfg = 0;
 
@@ -238,6 +262,8 @@ void Spw_Link_getConfig(const Spw_Link* const link, Spw_Link_Config* const confi
 
 void Spw_Link_reset(Spw_Link* const link)
 {
+  assert(link->id == SPW_LINK_1 || link->id == SPW_LINK_2);
+  
   if (link->id == SPW_LINK_1)
   {
     SPW_REGS->SPW_LINK1_SWRESET = SWRESET_ARM_PATTERN;
